@@ -32,13 +32,13 @@ defined('MOODLE_INTERNAL') || die();
  */
 
 class local_delete_course_confirm_form extends moodleform {
-    //Add elements to form
+    // Add elements to form.
     public function definition() {
         global $CFG;
 
-	    $mform = $this->_form;
-	    $course = $this->_customdata['course'];
-	    $mform->addElement('static', 'alert', get_string('alert', 'local_delete_course'));
-	    $this->add_action_buttons(true, get_string('delete_course', 'local_delete_course'));
+        $mform = $this->_form;
+        $course = $this->_customdata['course'];
+        $mform->addElement('static', 'alert', get_string('alert', 'local_delete_course'));
+        $this->add_action_buttons(true, get_string('delete_course', 'local_delete_course'));
     }
 }
