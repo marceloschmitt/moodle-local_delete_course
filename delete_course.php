@@ -72,7 +72,7 @@ if ($form->is_cancelled()) {
     core_php_time_limit::raise();
     // We do this here because it spits out feedback as it goes.
     delete_course($course);
-    echo $OUTPUT->heading( get_string("deletedcourse", "local_delete_course", $course->shortname) );
+    echo $OUTPUT->heading( get_string("deletedcourse", "local_delete_course") . $course->shortname);
     // Update course count in categories.
     fix_course_sortorder();
     echo $OUTPUT->continue_button($categoryurl);
