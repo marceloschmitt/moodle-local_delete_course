@@ -42,6 +42,6 @@ function local_delete_course_extend_navigation_course($navigation, $course, $con
     if (has_capability('local/delete_course:manage', $context)) {
         $url = new moodle_url('/local/delete_course/delete_course.php', array('id' => $course->id));
         $name = get_string('delete_course', 'local_delete_course');
-        $navigation->add($name, $url, navigation_node::TYPE_SETTING, null, null, new pix_icon('i/settings', ''));
+        $navigation->add($name, $url, navigation_node::TYPE_SETTING, null, null, new pix_icon('i/delete', ''));
     }
 }
