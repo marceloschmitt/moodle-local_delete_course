@@ -58,10 +58,9 @@ $form = new local_delete_course_confirm_form('delete_course.php?id='.$id, array(
 // Se foi cancelado.
 if ($form->is_cancelled()) {
     redirect($CFG->wwwroot.'/course/view.php?id='.$course->id);
-// Se foi confirmado.
-} else if ($data = $form->get_data()) {
+} else if ($data = $form->get_data()) { // Se foi confirmado.
     $strdeletingcourse = get_string("deletingcourse", "local_delete_course") . " " .
-       	$course->shortname;
+        $course->shortname;
     $categoryurl = new moodle_url('/course/index.php', array('categoryid' => $course->category));
     $PAGE->navbar->add($strdeletingcourse);
     $PAGE->set_title("$SITE->shortname: $strdeletingcourse");
