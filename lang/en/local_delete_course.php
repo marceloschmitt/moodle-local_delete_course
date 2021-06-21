@@ -26,3 +26,4 @@ $string['pluginname'] = 'Delete course';
 $string['delete_course'] = 'Delete course';
 $string['alert'] = 'Attention! If you continue this operation the course you are in will be deleted. Think about downloading a backup.';
 $string['deletingcourse'] = 'Deleting course';
+$string['deletingcourse'] = 'Deleted course:';
