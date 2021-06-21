@@ -23,7 +23,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 $plugin->component = 'local_delete_course';  // Recommended since 2.0.2 (MDL-26035). Required since 3.0 (MDL-48494).
-$plugin->version = 2021062105;  // YYYYMMDDHH (year, month, day, 24-hr time).
+$plugin->version = 2021062106;  // YYYYMMDDHH (year, month, day, 24-hr time).
 $plugin->supported = [39, 40];
 $plugin->requires = 2019111800;
 $plugin->maturity = MATURITY_RC;
