@@ -14,17 +14,15 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+defined('MOODLE_INTERNAL') || die();
+
 /**
- * Delete course - the form definition.
+ * Class to confirm couse deletion.
  *
  * @package     local_delete_course
  * @copyright   2024 Marcelo Augusto Rauh Schmitt
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-defined('MOODLE_INTERNAL') || die();
-
-// Class to confirm if want to remove a course.
 class local_delete_course_confirm_form extends moodleform {
     // Add elements to form.
     public function definition() {
