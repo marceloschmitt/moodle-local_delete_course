@@ -35,7 +35,7 @@ if ($id) {
         // Don't allow editing of 'site course' using this form.
         throw new moodle_exception('cannoteditsiteform');
     }
-    if (!$course = $DB->get_record('course', array('id' => $id))) {
+    if (!$course = $DB->get_record('course', ['id' => $id])) {
         throw new moodle_exception('invalidcourseid');
     }
     require_login($course);
@@ -48,12 +48,12 @@ if ($id) {
 
 // Setup PAGE.
 $PAGE->set_course($course);
-$PAGE->set_url('/local/delete_course/delete_course.php', array('id' => $course->id));
+$PAGE->set_url('/local/delete_course/delete_course.php', ['id' => $course->id]);
 $PAGE->set_title($course->shortname);
 $PAGE->set_heading($course->fullname);
 $PAGE->set_pagelayout('admin');
 
-$form = new local_delete_course_confirm_form('delete_course.php?id='.$id, array('course' => $course));
+$form = new local_delete_course_confirm_form('delete_course.php?id='.$id, ['course' => $course]);
 
 // Se foi cancelado.
 if ($form->is_cancelled()) {
@@ -61,7 +61,7 @@ if ($form->is_cancelled()) {
 } else if ($data = $form->get_data()) { // Se foi confirmado.
     $strdeletingcourse = get_string("deletingcourse", "local_delete_course") . " " .
         $course->shortname;
-    $categoryurl = new moodle_url('/course/index.php', array('categoryid' => $course->category));
+    $categoryurl = new moodle_url('/course/index.php', ['categoryid' => $course->category]);
     $PAGE->navbar->add($strdeletingcourse);
     $PAGE->set_title("$SITE->shortname: $strdeletingcourse");
     $PAGE->set_heading($SITE->fullname);
