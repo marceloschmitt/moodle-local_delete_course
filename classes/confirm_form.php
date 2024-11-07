@@ -22,7 +22,7 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class local_delete_course_confirm_form extends moodleform {
-    
+
     /**
      * This method just overrides the default in order to create the
      * alert message before deleting the course.
