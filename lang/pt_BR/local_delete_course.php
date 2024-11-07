@@ -25,6 +25,6 @@
 $string['alert'] = 'Cuidado! Se você continuar essa operação o seu curso será completamente apagado. Pense se não vale a pena fazer o download de um backup.';
 $string['delete_course'] = 'Remove curso';
 $string['delete_course:manage'] = 'Apaga próprios cursos';
-$string['pluginname'] = 'Remove curso';
 $string['deletedcourse'] = 'Curso apagado:';
 $string['deletingcourse'] = 'Apagando curso';
+$string['pluginname'] = 'Remove curso';
