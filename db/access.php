@@ -24,14 +24,14 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$capabilities = array(
-    'local/delete_course:manage' => array(
+$capabilities = [
+    'local/delete_course:manage' => [
             'riskbitmask' => RISK_XSS,
             'captype' => 'write',
             'contextlevel' => CONTEXT_COURSE,
-            'archetypes' => array(
+            'archetypes' => [
                 'editingteacher' => CAP_ALLOW,
-            'manager' => CAP_ALLOW
-        )
-    )
-);
+                'manager' => CAP_ALLOW
+        ]
+    ]
+];
