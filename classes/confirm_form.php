@@ -17,13 +17,14 @@
 /**
  * Delete course - the form definition.
  *
- * @package     delete_course
+ * @package     local_delete_course
  * @copyright   2024 Marcelo Augusto Rauh Schmitt
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
+// Class to confirm if want to remove a course.
 class local_delete_course_confirm_form extends moodleform {
     // Add elements to form.
     public function definition() {
