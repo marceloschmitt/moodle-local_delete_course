@@ -22,8 +22,6 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die;
-
 /**
  * This function extends the navigation with the delete_course item
  *
@@ -34,12 +32,12 @@ defined('MOODLE_INTERNAL') || die;
 function local_delete_course_extend_navigation_course($navigation, $course, $context) {
     global $CFG, $PAGE;
 
-    if (!$PAGE->course or $PAGE->course->id == 1) {
+    if (!$PAGE->course || $PAGE->course->id == 1) {
         return;
     }
 
     if (has_capability('local/delete_course:manage', $context)) {
-        $url = new moodle_url('/local/delete_course/delete_course.php', array('id' => $course->id));
+        $url = new moodle_url('/local/delete_course/delete_course.php', ['id' => $course->id]);
         $name = get_string('delete_course', 'local_delete_course');
         $navigation->add($name, $url, navigation_node::TYPE_SETTING, null, null, new pix_icon('i/delete', ''));
     }
