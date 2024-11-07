@@ -15,21 +15,14 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Edit course completion settings - the form definition.
+ * Delete course - the form definition.
  *
- * @package     local_recompletion
- * @copyright   2020 Catalyst IT
+ * @package     delete_course
+ * @copyright   2024 Marcelo Augusto Rauh Schmitt
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
-
-/**
- * Defines the course completion settings form.
- *
- * @copyright   2020 Catalyst IT
- * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
 
 class local_delete_course_confirm_form extends moodleform {
     // Add elements to form.
