@@ -14,8 +14,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Class to confirm couse deletion.
  *
@@ -24,7 +22,13 @@ defined('MOODLE_INTERNAL') || die();
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class local_delete_course_confirm_form extends moodleform {
-    // Add elements to form.
+    
+    /**
+     * This method just overrides the default in order to create the
+     * alert message before deleting the course.
+     *
+     * @see clean_param()
+     */
     public function definition() {
         global $CFG;
 
