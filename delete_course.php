@@ -63,9 +63,12 @@ $form = new local_delete_course_confirm_form('delete_course.php?id='.$id, ['cour
 if ($form->is_cancelled()) {
     redirect(new moodle_url('/course/view.php', ['id' => $course->id]));
 } else if ($data = $form->get_data()) { // Se foi confirmado.
+    // Same criterion delete_course() uses to choose async vs sync.
+    $asyncdeletion = !empty(get_config('moodlecourse', 'enablecourseasyncdeletion'));
+
     // Use category context so course navigation is not shown after deletion starts (same as core).
     $PAGE->set_context(context_coursecat::instance($course->category));
-    $strdeletingcourse = get_string('deletingcourse', 'local_delete_course') . ' ' . $courseshortname;
+    $strdeletingcourse = get_string('deletingcourse', '', $courseshortname);
     $PAGE->navbar->add($strdeletingcourse);
     $PAGE->set_title("$SITE->shortname: $strdeletingcourse");
     $PAGE->set_heading($SITE->fullname);
@@ -75,8 +78,8 @@ if ($form->is_cancelled()) {
     // This might take a while. Raise the execution time limit.
     core_php_time_limit::raise();
 
-    // Prefer async when the site setting is enabled (Moodle 5.3+).
-    $response = delete_course($course);
+    // showfeedback=true (progress notifications in sync); asyncpreferred=true (async when site setting is on).
+    $response = delete_course($course, true, true);
 
     if ($response === false) {
         echo $OUTPUT->notification(get_string('deletingcourseasynchronously_error'), 'error');
@@ -85,13 +88,12 @@ if ($form->is_cancelled()) {
         exit;
     }
 
-    // Detect async by actual outcome: course remains with deletioninprogress flagged.
-    $remaining = $DB->get_record('course', ['id' => $course->id], 'id, deletioninprogress');
-    if ($remaining && !empty($remaining->deletioninprogress)) {
+    // Mirror core course/delete.php messaging.
+    if ($asyncdeletion) {
         echo $OUTPUT->heading(get_string('deletingcourseasynchronously', 'moodle', $courseshortname));
     } else {
         fix_course_sortorder();
-        echo $OUTPUT->heading(get_string('deletedcourse', 'local_delete_course') . $courseshortname);
+        echo $OUTPUT->heading(get_string('deletedcourse', 'moodle', $courseshortname));
     }
 
     echo $OUTPUT->continue_button($categoryurl);
