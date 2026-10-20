@@ -63,6 +63,8 @@ $form = new local_delete_course_confirm_form('delete_course.php?id='.$id, ['cour
 if ($form->is_cancelled()) {
     redirect(new moodle_url('/course/view.php', ['id' => $course->id]));
 } else if ($data = $form->get_data()) { // Se foi confirmado.
+    // Use category context so course navigation is not shown after deletion starts (same as core).
+    $PAGE->set_context(context_coursecat::instance($course->category));
     $strdeletingcourse = get_string('deletingcourse', 'local_delete_course') . ' ' . $courseshortname;
     $PAGE->navbar->add($strdeletingcourse);
     $PAGE->set_title("$SITE->shortname: $strdeletingcourse");
@@ -73,22 +75,19 @@ if ($form->is_cancelled()) {
     // This might take a while. Raise the execution time limit.
     core_php_time_limit::raise();
 
-    // Prefer async when the site setting is enabled (Moodle 5.3+). Older versions ignore the 3rd arg.
+    // Prefer async when the site setting is enabled (Moodle 5.3+).
     $response = delete_course($course);
 
     if ($response === false) {
-        if (get_string_manager()->string_exists('deletingcourseasynchronously_error', 'moodle')) {
-            echo $OUTPUT->notification(get_string('deletingcourseasynchronously_error'), 'error');
-        } else {
-            echo $OUTPUT->notification(get_string('deletefailed', 'local_delete_course'), 'error');
-        }
+        echo $OUTPUT->notification(get_string('deletingcourseasynchronously_error'), 'error');
         echo $OUTPUT->continue_button($categoryurl);
         echo $OUTPUT->footer();
         exit;
     }
 
-    // Async deletion (Moodle 5.3+): course is queued; sortorder is fixed by the adhoc task.
-    if (!empty(get_config('moodlecourse', 'enablecourseasyncdeletion'))) {
+    // Detect async by actual outcome: course remains with deletioninprogress flagged.
+    $remaining = $DB->get_record('course', ['id' => $course->id], 'id, deletioninprogress');
+    if ($remaining && !empty($remaining->deletioninprogress)) {
         echo $OUTPUT->heading(get_string('deletingcourseasynchronously', 'moodle', $courseshortname));
     } else {
         fix_course_sortorder();
