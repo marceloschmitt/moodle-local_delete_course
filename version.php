@@ -25,7 +25,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 $plugin->component = 'local_delete_course';  // Recommended since 2.0.2 (MDL-26035). Required since 3.0 (MDL-48494).
-$plugin->version = 2024110701;  // YYYYMMDDHH (year, month, day, 24-hr time).
-$plugin->requires = 2019111800;
+$plugin->version = 2026102000;  // YYYYMMDDHH (year, month, day, 24-hr time).
+$plugin->requires = 2026100500; // Moodle 5.3.
 $plugin->maturity = MATURITY_STABLE;
-$plugin->release = '2.0';
+$plugin->release = '3.0';
