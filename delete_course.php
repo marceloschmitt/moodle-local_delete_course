@@ -78,8 +78,8 @@ if ($form->is_cancelled()) {
     // This might take a while. Raise the execution time limit.
     core_php_time_limit::raise();
 
-    // showfeedback=true (progress notifications in sync); asyncpreferred=true (async when site setting is on).
-    $response = delete_course($course, true, true);
+    // Defaults: showfeedback=true, asyncpreferred=true (async when site setting is on).
+    $response = delete_course($course);
 
     if ($response === false) {
         echo $OUTPUT->notification(get_string('deletingcourseasynchronously_error'), 'error');
