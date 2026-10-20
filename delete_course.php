@@ -22,6 +22,8 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+define('NO_OUTPUT_BUFFERING', true);
+
 require_once(__DIR__.'/../../config.php');
 require_once($CFG->dirroot.'/course/lib.php');
 require_once($CFG->dirroot.'/backup/util/includes/backup_includes.php');
@@ -78,13 +80,20 @@ if ($form->is_cancelled()) {
     // This might take a while. Raise the execution time limit.
     core_php_time_limit::raise();
 
+    // Stream sync progress notifications as they happen (same pattern as course/delete.php).
+    echo $OUTPUT->footer();
+    echo $OUTPUT->select_element_for_append();
+
+    // Preemptively reset the navcache before closing, so it remains the same on shutdown.
+    navigation_cache::destroy_volatile_caches();
+    \core\session\manager::write_close();
+
     // Defaults: showfeedback=true, asyncpreferred=true (async when site setting is on).
     $response = delete_course($course);
 
     if ($response === false) {
         echo $OUTPUT->notification(get_string('deletingcourseasynchronously_error'), 'error');
         echo $OUTPUT->continue_button($categoryurl);
-        echo $OUTPUT->footer();
         exit;
     }
 
@@ -97,7 +106,6 @@ if ($form->is_cancelled()) {
     }
 
     echo $OUTPUT->continue_button($categoryurl);
-    echo $OUTPUT->footer();
     exit; // We must exit here!!!
 }
 
