@@ -22,7 +22,11 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  **/
 
-$string['pluginname'] = 'Delete course';
-$string['delete_course'] = 'Delete course';
 $string['alert'] = 'Attention! If you continue this operation the course you are in will be deleted. Think about downloading a backup.';
+$string['delete_course'] = 'Delete course';
+$string['delete_course:manage'] = 'Delete own courses';
+$string['deletedcourse'] = 'Deleted course: ';
+$string['deletefailed'] = 'This course cannot be deleted at the moment. There may be a backup or restore in progress.';
 $string['deletingcourse'] = 'Deleting course';
+$string['pluginname'] = 'Delete course';
+$string['privacy:metadata'] = 'The Delete course plugin does not store any personal data.';

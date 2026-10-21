@@ -15,30 +15,25 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Edit course completion settings - the form definition.
+ * Class to confirm couse deletion.
  *
- * @package     local_recompletion
- * @copyright   2020 Catalyst IT
+ * @package     local_delete_course
+ * @copyright   2024 Marcelo Augusto Rauh Schmitt
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-defined('MOODLE_INTERNAL') || die();
-
-/**
- * Defines the course completion settings form.
- *
- * @copyright   2020 Catalyst IT
- * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
 class local_delete_course_confirm_form extends moodleform {
-    //Add elements to form
+    /**
+     * This method just overrides the default in order to create the
+     * alert message before deleting the course.
+     *
+     * @see clean_param()
+     */
     public function definition() {
         global $CFG;
 
-	    $mform = $this->_form;
-	    $course = $this->_customdata['course'];
-	    $mform->addElement('static', 'alert', get_string('alert', 'local_delete_course'));
-	    $this->add_action_buttons(true, get_string('delete_course', 'local_delete_course'));
+        $mform = $this->_form;
+        $course = $this->_customdata['course'];
+        $mform->addElement('static', 'alert', get_string('alert', 'local_delete_course'));
+        $this->add_action_buttons(true, get_string('delete_course', 'local_delete_course'));
     }
 }

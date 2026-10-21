@@ -15,16 +15,19 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Edit course recompletion settings
+ * Confirm and delete a course (sync or async, matching core Moodle 5.3+).
  *
  * @package     local_delete_course
  * @copyright   2021 Marcelo A. Rauh Schmitt
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require_once(__DIR__.'/../../config.php');
-require_once($CFG->dirroot.'/course/lib.php');
-require_once($CFG->libdir.'/formslib.php');
+define('NO_OUTPUT_BUFFERING', true);
+
+require_once(__DIR__ . '/../../config.php');
+require_once($CFG->dirroot . '/course/lib.php');
+require_once($CFG->dirroot . '/backup/util/includes/backup_includes.php');
+require_once($CFG->libdir . '/formslib.php');
 require_once('classes/confirm_form.php');
 
 $id = required_param('id', PARAM_INT);
@@ -33,54 +36,91 @@ $id = required_param('id', PARAM_INT);
 if ($id) {
     if ($id == SITEID) {
         // Don't allow editing of 'site course' using this form.
-        print_error('cannoteditsiteform');
+        throw new moodle_exception('cannoteditsiteform');
     }
-    if (!$course = $DB->get_record('course', array('id' => $id))) {
-        print_error('invalidcourseid');
+    if (!$course = $DB->get_record('course', ['id' => $id])) {
+        throw new moodle_exception('invalidcourseid');
     }
     require_login($course);
     $context = context_course::instance($course->id);
     require_capability('local/delete_course:manage', $context);
 } else {
     require_login();
-    print_error('needcourseid');
+    throw new moodle_exception('needcourseid');
 }
 
-//Setup PAGE
+// Setup PAGE.
 $PAGE->set_course($course);
-$PAGE->set_url('/local/delete_course/delete_course.php', array('id' => $course->id));
+$PAGE->set_url('/local/delete_course/delete_course.php', ['id' => $course->id]);
 $PAGE->set_title($course->shortname);
 $PAGE->set_heading($course->fullname);
 $PAGE->set_pagelayout('admin');
 
-$form = new local_delete_course_confirm_form('delete_course.php?id='.$id, array('course' => $course));
+$categoryurl = new moodle_url('/course/index.php', ['categoryid' => $course->category]);
+$courseshortname = format_string($course->shortname, true, ['context' => $context]);
 
-// Se foi cancelado
+$form = new local_delete_course_confirm_form('delete_course.php?id=' . $id, ['course' => $course]);
+
+// Se foi cancelado.
 if ($form->is_cancelled()) {
-	redirect($CFG->wwwroot.'/course/view.php?id='.$course->id);
-// Se foi confirmado.
-} else if ($data = $form->get_data()) {
-    $strdeletingcourse = get_string("deletingcourse", "local_delete_course") . " " .
-	       	$course->shortname;
-    $categoryurl = new moodle_url('/course/index.php', array('categoryid' => $course->category));
+    redirect(new moodle_url('/course/view.php', ['id' => $course->id]));
+} else if ($data = $form->get_data()) { // Se foi confirmado.
+    // Same criterion delete_course() uses to choose async vs sync.
+    $asyncdeletion = !empty(get_config('moodlecourse', 'enablecourseasyncdeletion'));
+
+    // Use category context so course navigation is not shown after deletion starts (same as core).
+    $PAGE->set_context(context_coursecat::instance($course->category));
+    $strdeletingcourse = get_string('deletingcourse', '', $courseshortname);
     $PAGE->navbar->add($strdeletingcourse);
     $PAGE->set_title("$SITE->shortname: $strdeletingcourse");
     $PAGE->set_heading($SITE->fullname);
     echo $OUTPUT->header();
     echo $OUTPUT->heading($strdeletingcourse);
+
     // This might take a while. Raise the execution time limit.
     core_php_time_limit::raise();
-    // We do this here because it spits out feedback as it goes.
-    delete_course($course);
-    echo $OUTPUT->heading( get_string("deletedcourse", "", $course->shortname) );
-    // Update course count in categories.
-    fix_course_sortorder();
-    echo $OUTPUT->continue_button($categoryurl);
+
+    // Stream sync progress notifications as they happen (same pattern as course/delete.php).
     echo $OUTPUT->footer();
+    echo $OUTPUT->select_element_for_append();
+
+    // Preemptively reset the navcache before closing, so it remains the same on shutdown.
+    navigation_cache::destroy_volatile_caches();
+    \core\session\manager::write_close();
+
+    // Defaults are showfeedback=true and asyncpreferred=true (async when site setting is on).
+    $response = delete_course($course);
+
+    if ($response === false) {
+        echo $OUTPUT->notification(get_string('deletingcourseasynchronously_error'), 'error');
+        echo $OUTPUT->continue_button($categoryurl);
+        exit;
+    }
+
+    // Mirror core course/delete.php messaging.
+    if ($asyncdeletion) {
+        echo $OUTPUT->heading(get_string('deletingcourseasynchronously', 'moodle', $courseshortname));
+    } else {
+        fix_course_sortorder();
+        echo $OUTPUT->heading(get_string('deletedcourse', 'moodle', $courseshortname));
+    }
+
+    echo $OUTPUT->continue_button($categoryurl);
     exit; // We must exit here!!!
 }
-// Se foi a primeira vez
+
+// Se foi a primeira vez.
 echo $OUTPUT->header();
+
+// Block deletion while an async course backup is pending (same guard as core course/delete.php).
+if (class_exists('async_helper') && async_helper::is_async_pending($id, 'course', 'backup')) {
+    echo $OUTPUT->notification(get_string('pendingasyncerror', 'backup'), 'error');
+    echo $OUTPUT->container(get_string('pendingasyncdeletedetail', 'backup'));
+    echo $OUTPUT->continue_button($categoryurl);
+    echo $OUTPUT->footer();
+    exit;
+}
+
 echo $OUTPUT->heading(get_string('delete_course', 'local_delete_course'));
 $form->display();
 echo $OUTPUT->footer();

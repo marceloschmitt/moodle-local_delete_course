@@ -16,17 +16,23 @@
 
 namespace local_delete_course\privacy;
 
+/**
+ * Just a necessary class.
+ *
+ * @package     local_delete_course
+ * @copyright   2024 Marcelo Augusto Rauh Schmitt
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class provider implements
     // This plugin does not store any personal user data.
     \core_privacy\local\metadata\null_provider {
-
     /**
      * Get the language string identifier with the component's language
      * file to explain why this plugin stores no data.
      *
      * @return  string
      */
-    public static function get_reason() : string {
+    public static function get_reason(): string {
         return 'privacy:metadata';
     }
 }
