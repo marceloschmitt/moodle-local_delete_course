@@ -24,10 +24,10 @@
 
 define('NO_OUTPUT_BUFFERING', true);
 
-require_once(__DIR__.'/../../config.php');
-require_once($CFG->dirroot.'/course/lib.php');
-require_once($CFG->dirroot.'/backup/util/includes/backup_includes.php');
-require_once($CFG->libdir.'/formslib.php');
+require_once(__DIR__ . '/../../config.php');
+require_once($CFG->dirroot . '/course/lib.php');
+require_once($CFG->dirroot . '/backup/util/includes/backup_includes.php');
+require_once($CFG->libdir . '/formslib.php');
 require_once('classes/confirm_form.php');
 
 $id = required_param('id', PARAM_INT);
@@ -59,7 +59,7 @@ $PAGE->set_pagelayout('admin');
 $categoryurl = new moodle_url('/course/index.php', ['categoryid' => $course->category]);
 $courseshortname = format_string($course->shortname, true, ['context' => $context]);
 
-$form = new local_delete_course_confirm_form('delete_course.php?id='.$id, ['course' => $course]);
+$form = new local_delete_course_confirm_form('delete_course.php?id=' . $id, ['course' => $course]);
 
 // Se foi cancelado.
 if ($form->is_cancelled()) {
@@ -88,7 +88,7 @@ if ($form->is_cancelled()) {
     navigation_cache::destroy_volatile_caches();
     \core\session\manager::write_close();
 
-    // Defaults: showfeedback=true, asyncpreferred=true (async when site setting is on).
+    // Defaults are showfeedback=true and asyncpreferred=true (async when site setting is on).
     $response = delete_course($course);
 
     if ($response === false) {
